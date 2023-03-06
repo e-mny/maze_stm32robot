@@ -65,7 +65,7 @@
 #define STRAIGHTRATIOF 1.23f
 #define STRAIGHTRATIOR 1.f // ALMOST straight, abit left. if wan to go more right, gotta decrease.
 #define DISTANCE_ERROR_OFFSETF -0.03f
-#define DISTANCE_ERROR_OFFSETR 0.1f
+#define DISTANCE_ERROR_OFFSETR -0.07565f
 
 /* USER CODE END PD */
 
@@ -3152,7 +3152,7 @@ void left90()
   moving = 1;
   htim1.Instance -> CCR4 = LEFT;
    __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 550);
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3350);
+   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3300);
   while (moving)
   {
 
@@ -3167,7 +3167,7 @@ void left90()
 //  stop();
   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-  move(6l,0);
+  move(15,0);
   moving = 0;
 //  dir = (dir + 3) % 4 ;
 //  x += axis[dir][0] * left_90[xydir];
@@ -3246,7 +3246,7 @@ void right90()
   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
   osDelay(200);
-  move(9,0);
+  move(9.5,0);
   moving = 0;
 //  x += axis[dir][0] * right_90[xydir];
 //  xydir = (xydir + 1) % 2;

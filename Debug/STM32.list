@@ -41,11 +41,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  18 .debug_line   0001d954  00000000  00000000  00059d4a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000db48c  00000000  00000000  0007769e  2**0
+ 19 .debug_str    000db4ad  00000000  00000000  0007769e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000050  00000000  00000000  00152b2a  2**0
+ 20 .comment      00000050  00000000  00000000  00152b4b  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  000083f8  00000000  00000000  00152b7c  2**2
+ 21 .debug_frame  000083f8  00000000  00000000  00152b9c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -8222,7 +8222,7 @@ void moveGyroPID(float distance, int forward)
  8004168:	20000414 	.word	0x20000414
  800416c:	3f9d70a4 	.word	0x3f9d70a4
  8004170:	bcf5c28f 	.word	0xbcf5c28f
- 8004174:	3dcccccd 	.word	0x3dcccccd
+ 8004174:	bd9aee63 	.word	0xbd9aee63
 				 else
 					 diffRight = 65535 - rightTick_prev + rightTick;
  8004178:	f8d7 30b8 	ldr.w	r3, [r7, #184]	; 0xb8
@@ -8980,7 +8980,7 @@ void moveGyroPIDOld(float distance, int forward)
  8004760:	40020800 	.word	0x40020800
  8004764:	20000414 	.word	0x20000414
  8004768:	bcf5c28f 	.word	0xbcf5c28f
- 800476c:	3dcccccd 	.word	0x3dcccccd
+ 800476c:	bd9aee63 	.word	0xbd9aee63
 			 }
 			 else
 			 {
@@ -9735,7 +9735,7 @@ void move(float distance, int forward)
  8004d6c:	20000414 	.word	0x20000414
  8004d70:	3f9d70a4 	.word	0x3f9d70a4
  8004d74:	bcf5c28f 	.word	0xbcf5c28f
- 8004d78:	3dcccccd 	.word	0x3dcccccd
+ 8004d78:	bd9aee63 	.word	0xbd9aee63
 			 }else{
 				 pwmValA = PIDController_Update(&pidLeft, totalDistance_right, totalDistance_left*STRAIGHTRATIOR, pwmValA) - pwmValAadjust;
  8004d7c:	f8b7 209e 	ldrh.w	r2, [r7, #158]	; 0x9e
@@ -10329,10 +10329,10 @@ void left90()
  80051fe:	681b      	ldr	r3, [r3, #0]
  8005200:	f240 2226 	movw	r2, #550	; 0x226
  8005204:	635a      	str	r2, [r3, #52]	; 0x34
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3350);
+   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3300);
  8005206:	4b21      	ldr	r3, [pc, #132]	; (800528c <left90+0xfc>)
  8005208:	681b      	ldr	r3, [r3, #0]
- 800520a:	f640 5216 	movw	r2, #3350	; 0xd16
+ 800520a:	f640 42e4 	movw	r2, #3300	; 0xce4
  800520e:	63da      	str	r2, [r3, #60]	; 0x3c
   while (moving)
  8005210:	e01f      	b.n	8005252 <left90+0xc2>
@@ -10389,9 +10389,9 @@ void left90()
  8005268:	681b      	ldr	r3, [r3, #0]
  800526a:	2200      	movs	r2, #0
  800526c:	63da      	str	r2, [r3, #60]	; 0x3c
-  move(6l,0);
+  move(15,0);
  800526e:	2000      	movs	r0, #0
- 8005270:	eeb1 0a08 	vmov.f32	s0, #24	; 0x40c00000  6.0
+ 8005270:	eeb2 0a0e 	vmov.f32	s0, #46	; 0x41700000  15.0
  8005274:	f7ff fbba 	bl	80049ec <move>
   moving = 0;
  8005278:	4b09      	ldr	r3, [pc, #36]	; (80052a0 <left90+0x110>)
@@ -10539,9 +10539,9 @@ void right90()
   osDelay(200);
  800536c:	20c8      	movs	r0, #200	; 0xc8
  800536e:	f007 ff1a 	bl	800d1a6 <osDelay>
-  move(9,0);
+  move(9.5,0);
  8005372:	2000      	movs	r0, #0
- 8005374:	eeb2 0a02 	vmov.f32	s0, #34	; 0x41100000  9.0
+ 8005374:	eeb2 0a03 	vmov.f32	s0, #35	; 0x41180000  9.5
  8005378:	f7ff fb38 	bl	80049ec <move>
   moving = 0;
  800537c:	4b08      	ldr	r3, [pc, #32]	; (80053a0 <right90+0xf4>)
