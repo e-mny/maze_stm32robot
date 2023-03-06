@@ -2948,81 +2948,81 @@ void move(float distance, int forward)
 void bLeft90()
 {
 	// indoor
-//		uint8_t messageA[20];
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
-//		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-//
-//		htim1.Instance -> CCR4 = STRAIGHT; //centre
-//		move(7,1);
-//
-//	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
-//	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
-//	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
-//	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
-//	  moving = 1;
-//	  htim1.Instance -> CCR4 = LEFT;
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 600);
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3700);
-//	  while (moving)
-//	  {
-//
-//	     if (totalAngle <= -85)
-//	     {
-//	       break;
-//	     }
-//	     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
-//	//     OLED_ShowString(10,30, messageA);
-//	//     OLED_Refresh_Gram();
-//	  }
-//	//  stop();
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-//	  moving = 0;
-//	  move(8.5, 0);
-//	//  dir = (dir + 3) % 4 ;
-//	//  x += axis[dir][0] * left_90[xydir];
-//	//  xydir = (xydir + 1) % 2;
-//	//  y += axis[dir][1] * left_90[xydir];
+		uint8_t messageA[20];
+		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+
+		htim1.Instance -> CCR4 = STRAIGHT; //centre
+		move(8.5,1);
+
+	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
+	  moving = 1;
+	  htim1.Instance -> CCR4 = LEFT;
+	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 600);
+	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3700);
+	  while (moving)
+	  {
+
+	     if (totalAngle <= -81.5)
+	     {
+	       break;
+	     }
+	     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
+	//     OLED_ShowString(10,30, messageA);
+	//     OLED_Refresh_Gram();
+	  }
+	//  stop();
+	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+	  moving = 0;
+	  move(10.75, 0);
+	//  dir = (dir + 3) % 4 ;
+	//  x += axis[dir][0] * left_90[xydir];
+	//  xydir = (xydir + 1) % 2;
+	//  y += axis[dir][1] * left_90[xydir];
 
 
 	// outdoor
-	uint8_t messageA[20];
-	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-
-	htim1.Instance -> CCR4 = STRAIGHT; //centre
-	move(10.5,1);
-
-  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
-  moving = 1;
-  htim1.Instance -> CCR4 = LEFT;
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 600);
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3700);
-  while (moving)
-  {
-
-     if (totalAngle <= -82)
-     {
-       break;
-     }
-     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
-//     OLED_ShowString(10,30, messageA);
-//     OLED_Refresh_Gram();
-  }
-//  stop();
-  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-  moving = 0;
-  move(8.5, 0);
-//  dir = (dir + 3) % 4 ;
-//  x += axis[dir][0] * left_90[xydir];
-//  xydir = (xydir + 1) % 2;
-//  y += axis[dir][1] * left_90[xydir];
+//	uint8_t messageA[20];
+//	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+//	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+//	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+//
+//	htim1.Instance -> CCR4 = STRAIGHT; //centre
+//	move(10.5,1);
+//
+//  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
+//  moving = 1;
+//  htim1.Instance -> CCR4 = LEFT;
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 600);
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3700);
+//  while (moving)
+//  {
+//
+//     if (totalAngle <= -82)
+//     {
+//       break;
+//     }
+//     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
+////     OLED_ShowString(10,30, messageA);
+////     OLED_Refresh_Gram();
+//  }
+////  stop();
+//  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+//  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+//  moving = 0;
+//  move(8.5, 0);
+////  dir = (dir + 3) % 4 ;
+////  x += axis[dir][0] * left_90[xydir];
+////  xydir = (xydir + 1) % 2;
+////  y += axis[dir][1] * left_90[xydir];
 }
 
 void bRight90()
