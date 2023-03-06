@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -2214,6 +2215,8 @@ void sendToRPI(char* msg)
 
 void moveGyroPID(float distance, int forward)
 {
+
+
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
@@ -3841,7 +3844,12 @@ void StartDefaultTask(void *argument)
 		switch(cmd)
 		{
 		case 'w':
-			moveGyroPID(data, 1);
+			int num_loops = ceil(data / 50);
+			int remainder_dist = data % 50;
+			for (int i = 0; i < num_loops; i++){
+				moveGyroPID(50, 1);
+			}
+			moveGyroPID(remainder_dist, 1);
 //			moveGyroPIDOld(10,1);
 //			gyro_move(data, 1);
 //			sendToRPI("Forward done!f\n\0");
