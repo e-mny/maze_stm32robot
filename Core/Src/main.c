@@ -55,18 +55,18 @@
 // indoor:
 #define STRAIGHTRATIOF 1.031f // for lab. this one veers more left
 #define STRAIGHTRATIOR 1.0134f // for lab. veers more left
-#define DISTANCE_ERROR_OFFSETF -0.03f
+#define DISTANCE_ERROR_OFFSETF -0.19f
 #define DISTANCE_ERROR_OFFSETR 0.1f
 
 //#define STRAIGHTRATIOF 1.0258f // straight on 4 october
 
 // outdoor:
-#define STRAIGHTRATIOF 1.07f // this one veers more right
-#define STRAIGHTRATIOF 1.0875f
-#define STRAIGHTRATIOF 1.23f
-#define STRAIGHTRATIOR 1.f // ALMOST straight, abit left. if wan to go more right, gotta decrease.
-#define DISTANCE_ERROR_OFFSETF -0.03f
-#define DISTANCE_ERROR_OFFSETR -0.06f
+//#define STRAIGHTRATIOF 1.07f // this one veers more right
+//#define STRAIGHTRATIOF 1.0875f
+//#define STRAIGHTRATIOF 1.23f
+//#define STRAIGHTRATIOR 1.f // ALMOST straight, abit left. if wan to go more right, gotta decrease.
+//#define DISTANCE_ERROR_OFFSETF -0.03f
+//#define DISTANCE_ERROR_OFFSETR -0.06f
 
 /* USER CODE END PD */
 
@@ -2547,6 +2547,7 @@ void moveGyroPIDOld(float distance, int forward)
 	int diffRight = 0;
 
 	float distanceError;
+	float distErrOffset;
 
 	int servo;
 
@@ -2568,6 +2569,20 @@ void moveGyroPIDOld(float distance, int forward)
 		HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
 		HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
+	}
+
+	if (forward) {
+		if (distance <= 10) distErrOffset = -0.92;
+		else if (distance <= 20) distErrOffset = -0.1;
+		else if (distance <= 30) distErrOffset = -0.06;
+		else if (distance <= 40) distErrOffset = -0.06;
+		else distErrOffset = DISTANCE_ERROR_OFFSETF;
+	} else {
+		if (distance <= 10) distErrOffset = 0.0005;
+		else if (distance <= 20) distErrOffset = -0.15;
+		else if (distance <= 30) distErrOffset = -0.16;
+		else if (distance <= 40) distErrOffset = -0.15;
+		else distErrOffset = DISTANCE_ERROR_OFFSETR;
 	}
 
 	/*Infinite loop*/
@@ -2641,14 +2656,8 @@ void moveGyroPIDOld(float distance, int forward)
 //			 }
 
 
-			 if(forward)
-			 {
-				  distanceError = DISTANCE_ERROR_OFFSETF * distance;
-			 }
-			 else
-			 {
-				  distanceError = DISTANCE_ERROR_OFFSETR * distance;
-			 }
+
+			 distanceError = distErrOffset * distance;
 
 			 //if robot doesnt go straight, using gyro to adjust, straight = 145
 			 if (forward)
@@ -2801,6 +2810,7 @@ void move(float distance, int forward)
 	int diffRight = 0;
 
 	float distanceError;
+	float distErrOffset;
 
 	int servo;
 
@@ -2897,14 +2907,7 @@ void move(float distance, int forward)
 			 }
 
 
-			 if(forward)
-			 {
-				  distanceError = DISTANCE_ERROR_OFFSETF * distance;
-			 }
-			 else
-			 {
-				  distanceError = DISTANCE_ERROR_OFFSETR * distance;
-			 }
+			 distanceError = distErrOffset * distance;
 
 			 if (totalDistance_left >= (distance+distanceError) || totalDistance_right >= (distance+distanceError))
 			 {
@@ -2953,45 +2956,7 @@ void move(float distance, int forward)
 void bLeft90()
 {
 	// indoor
-//	uint8_t messageA[20];
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
-//		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-//
-//		htim1.Instance -> CCR4 = STRAIGHT; //centre
-//		move(8.5,1);
-//
-//	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
-//	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
-//	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
-//	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
-//	  moving = 1;
-//	  htim1.Instance -> CCR4 = LEFT;
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 600);
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3700);
-//	  while (moving)
-//	  {
-//
-//	     if (totalAngle <= -81.0)
-//	     {
-//	       break;
-//	     }
-//	     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
-//	//     OLED_ShowString(10,30, messageA);
-//	//     OLED_Refresh_Gram();
-//	  }
-//	//  stop();
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-//	  moving = 0;
-//	  move(10.75, 0);
-	//  dir = (dir + 3) % 4 ;
-	//  x += axis[dir][0] * left_90[xydir];
-	//  xydir = (xydir + 1) % 2;
-	//  y += axis[dir][1] * left_90[xydir];
-
-	  // outdoor
-		uint8_t messageA[20];
+	uint8_t messageA[20];
 		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
 		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
 		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
@@ -3023,6 +2988,44 @@ void bLeft90()
 	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
 	  moving = 0;
 	  move(10.75, 0);
+//	  dir = (dir + 3) % 4 ;
+//	  x += axis[dir][0] * left_90[xydir];
+//	  xydir = (xydir + 1) % 2;
+//	  y += axis[dir][1] * left_90[xydir];
+
+	  // outdoor
+//		uint8_t messageA[20];
+//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+//		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+//
+//		htim1.Instance -> CCR4 = STRAIGHT; //centre
+//		move(8.5,1);
+//
+//	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
+//	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
+//	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
+//	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
+//	  moving = 1;
+//	  htim1.Instance -> CCR4 = LEFT;
+//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 600);
+//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3700);
+//	  while (moving)
+//	  {
+//
+//	     if (totalAngle <= -81.0)
+//	     {
+//	       break;
+//	     }
+//	     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
+//	//     OLED_ShowString(10,30, messageA);
+//	//     OLED_Refresh_Gram();
+//	  }
+//	//  stop();
+//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+//	  moving = 0;
+//	  move(10.75, 0);
 //	//  dir = (dir + 3) % 4 ;
 //	//  x += axis[dir][0] * left_90[xydir];
 //	//  xydir = (xydir + 1) % 2;
@@ -3033,79 +3036,40 @@ void bLeft90()
 void bRight90()
 {
 	// indoor
-//	uint8_t messageA[20];
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
-//		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-//
-//		htim1.Instance -> CCR4 = STRAIGHT; //centre
-//		move(7.35, 1);
-//
-//	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
-//	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
-//	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
-//	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
-//	  moving = 1;
-//	  htim1.Instance -> CCR4 = 250;
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3400);
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 500);
-//	  while (moving)
-//	  {
-//
-//	     if (totalAngle > 77)
-//	     {
-//	       break;
-//	     }
-//	     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
-//		//     OLED_ShowString(10,30, messageA);
-//		//     OLED_Refresh_Gram();
-//	  }
-//		//  stop();
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-//	  moving = 0;
-//	  move(6, 0);
+	uint8_t messageA[20];
+		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+
+		htim1.Instance -> CCR4 = STRAIGHT; //centre
+		move(7.35, 1);
+
+	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
+	  moving = 1;
+	  htim1.Instance -> CCR4 = 250;
+	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3400);
+	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 500);
+	  while (moving)
+	  {
+
+	     if (totalAngle > 77)
+	     {
+	       break;
+	     }
+	     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
+		//     OLED_ShowString(10,30, messageA);
+		//     OLED_Refresh_Gram();
+	  }
+		//  stop();
+	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+	  moving = 0;
+	  move(6, 0);
 
 	// outdoor
-	uint8_t messageA[20];
-	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-
-	htim1.Instance -> CCR4 = STRAIGHT; //centre
-
-	move(11, 1);
-
-  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
-  moving = 1;
-  htim1.Instance -> CCR4 = 250;
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3400);
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 500);
-  while (moving)
-  {
-
-     if (totalAngle > 77)
-     {
-       break;
-     }
-     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
-	//     OLED_ShowString(10,30, messageA);
-	//     OLED_Refresh_Gram();
-  }
-	//  stop();
-  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-  moving = 0;
-  move(8, 0);
-}
-
-void left90()
-{
-	// indoor
-//	totalAngle = 0;
 //	uint8_t messageA[20];
 //	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
 //	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
@@ -3113,36 +3077,37 @@ void left90()
 //
 //	htim1.Instance -> CCR4 = STRAIGHT; //centre
 //
-//  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
-//  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
-//  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
-//  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
+//	move(11, 1);
+//
+//  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_SET);
 //  moving = 1;
-//  htim1.Instance -> CCR4 = LEFT;
-//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 550);
-//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3350);
+//  htim1.Instance -> CCR4 = 250;
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3400);
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 500);
 //  while (moving)
 //  {
 //
-//     if (totalAngle >= 78)
+//     if (totalAngle > 77)
 //     {
 //       break;
 //     }
 //     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
-//     OLED_ShowString(10,30, messageA);
-//     OLED_Refresh_Gram();
+//	//     OLED_ShowString(10,30, messageA);
+//	//     OLED_Refresh_Gram();
 //  }
-////  stop();
+//	//  stop();
 //  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
 //  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-//  move(6l,0);
 //  moving = 0;
-////  dir = (dir + 3) % 4 ;
-////  x += axis[dir][0] * left_90[xydir];
-////  xydir = (xydir + 1) % 2;
-////  y += axis[dir][1] * left_90[xydir];
+//  move(8, 0);
+}
 
-	// outdoor
+void left90()
+{
+	// indoor
 	totalAngle = 0;
 	uint8_t messageA[20];
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
@@ -3156,13 +3121,13 @@ void left90()
   HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
   moving = 1;
-  htim1.Instance -> CCR4 = 107;
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 350);
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3800);
+  htim1.Instance -> CCR4 = LEFT;
+   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 550);
+   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3350);
   while (moving)
   {
 
-     if (totalAngle >= 74)
+     if (totalAngle >= 78)
      {
        break;
      }
@@ -3173,9 +3138,47 @@ void left90()
 //  stop();
   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+  move(6l,0);
   moving = 0;
-  move(0,0);
-  moveGyroPIDOld(12, 0);
+//  dir = (dir + 3) % 4 ;
+//  x += axis[dir][0] * left_90[xydir];
+//  xydir = (xydir + 1) % 2;
+//  y += axis[dir][1] * left_90[xydir];
+
+	// outdoor
+//	totalAngle = 0;
+//	uint8_t messageA[20];
+//	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+//	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+//	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+//
+//	htim1.Instance -> CCR4 = STRAIGHT; //centre
+//
+//  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
+//  moving = 1;
+//  htim1.Instance -> CCR4 = 107;
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 350);
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3800);
+//  while (moving)
+//  {
+//
+//     if (totalAngle >= 74)
+//     {
+//       break;
+//     }
+//     sprintf(messageA, "Langle %5d\0", (int)(totalAngle));
+//     OLED_ShowString(10,30, messageA);
+//     OLED_Refresh_Gram();
+//  }
+////  stop();
+//  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+//  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+//  moving = 0;
+//  move(0,0);
+//  moveGyroPIDOld(12, 0);
 //  dir = (dir + 3) % 4 ;
 //  x += axis[dir][0] * left_90[xydir];
 //  xydir = (xydir + 1) % 2;
@@ -3185,76 +3188,76 @@ void left90()
 void right90()
 {
 	//indoor
-//	uint8_t messageA[20];
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-//		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
-//		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-//
-//		htim1.Instance -> CCR4 = STRAIGHT; //centre
-//
-//	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
-//	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
-//	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
-//	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
-//	  moving = 1;
-//	  htim1.Instance -> CCR4 = 250;
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3500);
-//	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 700);
-//	  while (moving)
-//	  {
-//
-//	     if (totalAngle < -90)
-//	     {
-//	       break;
-//	     }
-//	     sprintf(messageA, "Rangle %5d\0", (int)(totalAngle));
-//	//     OLED_ShowString(10,40, messageA);
-//	//     OLED_Refresh_Gram();
-//	  }
-//	//  stop();
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-//	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-//	  osDelay(200);
-//	  move(9,0);
-//	  moving = 0;
-//	//  x += axis[dir][0] * right_90[xydir];
-//	//  xydir = (xydir + 1) % 2;
-//	//  y += axis[dir][1] * right_90[xydir];
-//	//  dir = (dir + 1) % 4 ;
+	uint8_t messageA[20];
+		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+		HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+		HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+
+		htim1.Instance -> CCR4 = STRAIGHT; //centre
+
+	  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
+	  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
+	  moving = 1;
+	  htim1.Instance -> CCR4 = 250;
+	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3500);
+	   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 700);
+	  while (moving)
+	  {
+
+	     if (totalAngle < -90)
+	     {
+	       break;
+	     }
+	     sprintf(messageA, "Rangle %5d\0", (int)(totalAngle));
+	//     OLED_ShowString(10,40, messageA);
+	//     OLED_Refresh_Gram();
+	  }
+	//  stop();
+	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+	  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+	  osDelay(200);
+	  move(9,0);
+	  moving = 0;
+	//  x += axis[dir][0] * right_90[xydir];
+	//  xydir = (xydir + 1) % 2;
+	//  y += axis[dir][1] * right_90[xydir];
+	//  dir = (dir + 1) % 4 ;
 
 	// outdoor
-	uint8_t messageA[20];
-	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
-	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
-	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
-
-	htim1.Instance -> CCR4 = STRAIGHT; //centre
-
-  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
-  moving = 1;
-  htim1.Instance -> CCR4 = 250;
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3200);
-   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
-  while (moving)
-  {
-
-     if (totalAngle < -85)
-     {
-       break;
-     }
-     sprintf(messageA, "Rangle %5d\0", (int)(totalAngle));
-//     OLED_ShowString(10,40, messageA);
-//     OLED_Refresh_Gram();
-  }
-//  stop();
-  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-  osDelay(200);
-  move(15,0);
-  moving = 0;
+//	uint8_t messageA[20];
+//	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
+//	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
+//	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+//
+//	htim1.Instance -> CCR4 = STRAIGHT; //centre
+//
+//  HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
+//  moving = 1;
+//  htim1.Instance -> CCR4 = 250;
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3200);
+//   __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
+//  while (moving)
+//  {
+//
+//     if (totalAngle < -85)
+//     {
+//       break;
+//     }
+//     sprintf(messageA, "Rangle %5d\0", (int)(totalAngle));
+////     OLED_ShowString(10,40, messageA);
+////     OLED_Refresh_Gram();
+//  }
+////  stop();
+//  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+//  __HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+//  osDelay(200);
+//  move(15,0);
+//  moving = 0;
 //  x += axis[dir][0] * right_90[xydir];
 //  xydir = (xydir + 1) % 2;
 //  y += axis[dir][1] * right_90[xydir];
@@ -3848,12 +3851,14 @@ void StartDefaultTask(void *argument)
 		switch(cmd)
 		{
 		case 'w':
-			num_loops = ceil(data / 50);
+			num_loops = floor(data / 50);
 			remainder_dist = data % 50;
 			for (int i = 0; i < num_loops; i++){
-				moveGyroPID(50, 1);
+				moveGyroPIDOld(50, 1);
 			}
-			moveGyroPID(remainder_dist, 1);
+			if (remainder_dist != 0){
+			moveGyroPIDOld(remainder_dist, 1);
+			}
 //			moveGyroPIDOld(10,1);
 //			gyro_move(data, 1);
 //			sendToRPI("Forward done!f\n\0");
@@ -3872,12 +3877,14 @@ void StartDefaultTask(void *argument)
 			sendToRPI("RPI:d");
 			break;
 		case 's':
-			num_loops = ceil(data / 50);
+			num_loops = floor(data / 50);
 			remainder_dist = data % 50;
 			for (int i = 0; i < num_loops; i++){
-				moveGyroPID(50, 0);
+				moveGyroPIDOld(50, 0);
 			}
-			moveGyroPIDOld(remainder_dist, 0);
+			if (remainder_dist != 0){
+						moveGyroPIDOld(remainder_dist, 0);
+						}
 //			moveGyroPIDOld(10, 0);
 //			sendToRPI("Reverse done!\0");
 			sendToRPI("RPI:d");
