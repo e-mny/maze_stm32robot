@@ -2165,9 +2165,9 @@ void moveGyroPID(float distance, int forward) {
 		else if (distance == 30)
 			distErrOffset = 0.02;
 		else if (distance == 40)
-			distErrOffset = 0.055;
+			distErrOffset = 0.05;
 		else if (distance == 50)
-			distErrOffset = 0.085;
+			distErrOffset = 0.075;
 		else
 			distErrOffset = DISTANCE_ERROR_OFFSETR;
 	}
@@ -2832,7 +2832,7 @@ void bLeft90() {
 	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2900);
 	while (moving) {
 
-		if (totalAngle < -85.5) {
+		if (totalAngle < -85) {
 			break;
 		}
 		sprintf(messageA, "Langle %5d\0", (int) (totalAngle));
