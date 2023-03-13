@@ -1,0 +1,11 @@
+oled.c:8:6:OLED_Refresh_Gram	3
+oled.c:20:6:OLED_WR_Byte	4
+oled.c:43:6:OLED_Clear	3
+oled.c:53:6:OLED_Display_On	1
+oled.c:62:6:OLED_Display_Off	1
+oled.c:72:6:OLED_DrawPoint	4
+oled.c:85:6:OLED_ShowChar	6
+oled.c:110:10:oled_pow	2
+oled.c:120:6:OLED_ShowNumber	5
+oled.c:142:6:OLED_ShowString	4
+oled.c:156:6:OLED_Init	1

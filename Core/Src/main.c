@@ -119,10 +119,12 @@ uint32_t IC_Val1 = 0;
 uint32_t IC_Val2 = 0;
 uint32_t Difference = 0;
 uint8_t Is_First_Captured = 0;  // is the first value captured ?
-float Distance = 0;
+uint8_t Distance = 0;
 uint8_t buff[20];
 uint16_t inputAngle;
-
+uint8_t hundreds_digit;
+uint8_t tens_digit;
+uint8_t	ones_digit;
 uint8_t ICMAddr = 0x68;
 /* USER CODE END PV */
 
@@ -151,6 +153,7 @@ void moveUltra();
 void moveUltraEnd();
 void moveUltraEndLeft();
 void moveUltraExtreme();
+void testUltrasonic();
 
 /* USER CODE END PFP */
 
@@ -703,11 +706,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 		cmd = aRxBuffer[0];
 		i++;
 	} else if (i > 0) {
-		data = data * 10 + (aRxBuffer[0] - '0');
-//		data = aRxBuffer[0];
+//		data = data * 10 + (aRxBuffer[0] - '0'); //task 1
+		data = aRxBuffer[0]; //task 2
 	}
 
-	uint8_t message1[20];
+
+	uint8_t message1[10];
 	HAL_UART_Receive_IT(&huart3, (uint8_t*) aRxBuffer, 1);
 //	HAL_UART_Transmit(&huart3, (uint8_t *) aRxBuffer, 1, 0xFFFF);
 
@@ -762,6 +766,10 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 			}
 
 			Distance = Difference * 0.034 / 2;
+//			uint8_t data_string[3];
+//			sprintf(data_string, "%d\0", Distance);
+//			OLED_ShowString(10, 30, data_string);
+//			OLED_Refresh_Gram(); //Refresh Ram
 			Is_First_Captured = 0; // set it back to false
 
 			// set polarity to rising edge
@@ -3361,6 +3369,21 @@ void turn(uint8_t direction, uint8_t forward) {
 	return;
 }
 
+void testUltrasonic(){
+//	OLED_Clear();
+	HCSR04_Read();
+//	hundreds_digit = (Distance/100) + 48;   // 100th pos
+//	tens_digit = ((Distance/10)%10) +48;  // 10th pos
+//	ones_digit = (Distance%10)+48;  // 1st pos
+//	Distance = hundreds_digit * 100 + tens_digit * 10 + ones_digit;
+	sprintf(Distance, (int) (Distance));
+
+		  OLED_ShowString(10, 20, Distance);
+		  OLED_Refresh_Gram();
+		  osDelay(100);
+//		  Distance = 0;
+}
+
 void spotTurn(uint8_t direction) {
 	uint16_t offset_show[20];
 
@@ -3735,6 +3758,10 @@ void StartDefaultTask(void *argument) {
 				break;
 			case 'Y': // when first obstacle goes left-> Yln or Yrn
 				task2A2L(data);
+				sendToRPI("RPI:d");
+				break;
+			case 'm':
+				testUltrasonic();
 				sendToRPI("RPI:d");
 				break;
 			default:
