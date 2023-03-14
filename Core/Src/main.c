@@ -43,11 +43,11 @@
 #define PID_KP  1.0f // default 2.0f
 #define PID_KI  0.0f // default 0.5f
 
-#define PID_LIM_MIN  1450 //
-#define PID_LIM_MAX  2900 //
+#define PID_LIM_MIN  4050 //
+#define PID_LIM_MAX  5000 //
 
 #define PID_TURNING_LIM_MIN  2200 //
-#define PID_TURNING_LIM_MAX  3000 //
+#define PID_TURNING_LIM_MAX  2800 //
 
 #define SAMPLE_TIME_S 0.05f
 
@@ -119,7 +119,7 @@ uint32_t IC_Val1 = 0;
 uint32_t IC_Val2 = 0;
 uint32_t Difference = 0;
 uint8_t Is_First_Captured = 0;  // is the first value captured ?
-uint8_t Distance = 0;
+float Distance = 0;
 uint8_t buff[20];
 uint16_t inputAngle;
 uint8_t hundreds_digit;
@@ -766,7 +766,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 			}
 
 			Distance = Difference * 0.034 / 2;
-//			uint8_t data_string[3];
+//			uint8_t data_string[20];
 //			sprintf(data_string, "%d\0", Distance);
 //			OLED_ShowString(10, 30, data_string);
 //			OLED_Refresh_Gram(); //Refresh Ram
@@ -790,122 +790,141 @@ void task2A(uint32_t data) {
 	HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
 
-	//if picture detected is left tln
-	if (data == 'l') {
-		htim1.Instance->CCR4 = 115;
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 1000);
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2000);
-		moving = 1;
-		while (moving) {
-			if ((int) totalAngle >= 27) {
-				break;
-			}
-			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
-			OLED_ShowString(10, 20, offset_show);
-			OLED_Refresh_Gram();
-		}
-		moveGyroPID(60, 1);
-		htim1.Instance->CCR4 = RIGHT;
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2000);
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
-		continueMoving = 0;
-		while (Distance > 14) {
-			if (totalAngle <= -1 * 15) {
-				continueMoving = 1;
-// 				sendToRPI("here");
-				break;
-			}
+//	moveGyroPID(20, 1);
+//	if (Distance < 14){
+//		htim1.Instance->CCR4 = 115;
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 1000);
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2000);
+//	}
 
-			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
-			OLED_ShowString(10, 20, offset_show);
-			OLED_Refresh_Gram();
-		}
-		if (continueMoving) {
-			moveUltraExtreme();
-		}
-
-	} else if (data == 'r') {
-		htim1.Instance->CCR4 = RIGHT;
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2000);
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
-		moving = 1;
-		while (moving) {
-			if ((int) totalAngle <= -1 * 23) // prev was 30
-					{
-				break;
-			}
-			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
-			OLED_ShowString(10, 20, offset_show);
-			OLED_Refresh_Gram();
-		}
-		moveGyroPID(58, 1);
+	if (data == 'l'){
 		htim1.Instance->CCR4 = LEFT;
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 1000);
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2000);
-		continueMoving = 0;
-
-		while (Distance > 14) {
-			if (totalAngle >= 25) {
-				continueMoving = 1;
-				break;
-			}
-			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
-			OLED_ShowString(10, 20, offset_show);
-			OLED_Refresh_Gram();
-		}
-		if (continueMoving) {
-			moveUltraExtreme();
+		osDelay(5000);
+		if (Distance <14){
+			htim1.Instance->CCR4 = RIGHT;
+			osDelay(5000);
 		}
 
-		// THIS PORTION IS FOR COMPLETING THE TURN NO MATTER THE ULTRASENSOR DISTANCE
-// 		while (moving)
-// 		{
-// 			if ((int)totalAngle >= 25)
-// 			{
-// 				continueMoving = 1;
-// 				break;
-// 			}
-//			 sprintf(offset_show, "angle %5d\0", (int)(totalAngle));
-//			 OLED_ShowString(10,20, offset_show);
-//			 OLED_Refresh_Gram();
-// 		 }
-// 		if(continueMoving)
-// 		{
-//// 			moving = 0;
-//// 			sendToRPI("there");
-// 			moveUltraExtreme();
-// 	 		continueMoving = 0;
-// 		}
 	}
 
-	// straighten STM back to be perpendicular to 2nd obstacle
-	if (continueMoving) {
-		if (actualAngle > 0) {
-			while (actualAngle > 0) {
-				moving = 1;
-				htim1.Instance->CCR4 = RIGHT;
-				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 1000);
-				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 400);
-				delay(1);
-			}
-		} else if (actualAngle < 0) {
-			while (actualAngle < 0) {
-				moving = 1;
-				htim1.Instance->CCR4 = LEFT;
-				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 400);
-				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
-				delay(1);
-			}
-		}
-	}
 
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
-	htim1.Instance->CCR4 = STRAIGHT;
-	HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
-	HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
+//	//if picture detected is left tln
+//	if (data == 'l') {
+//		htim1.Instance->CCR4 = 115;
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 1000);
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2000);
+//		moving = 1;
+//		while (moving) {
+//			if ((int) totalAngle >= 27) {
+//				break;
+//			}
+//			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
+//			OLED_ShowString(10, 20, offset_show);
+//			OLED_Refresh_Gram();
+//		}
+//		moveGyroPID(60, 1);
+//		htim1.Instance->CCR4 = RIGHT;
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2000);
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
+//		continueMoving = 0;
+//		while (Distance > 14) {
+//			if (totalAngle <= -1 * 15) {
+//				continueMoving = 1;
+//// 				sendToRPI("here");
+//				break;
+//			}
+//
+//			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
+//			OLED_ShowString(10, 20, offset_show);
+//			OLED_Refresh_Gram();
+//		}
+//		if (continueMoving) {
+//			moveUltraExtreme();
+//		}
+//
+//	} else if (data == 'r') {
+//		htim1.Instance->CCR4 = RIGHT;
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2000);
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
+//		moving = 1;
+//		while (moving) {
+//			if ((int) totalAngle <= -1 * 23) // prev was 30
+//					{
+//				break;
+//			}
+//			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
+//			OLED_ShowString(10, 20, offset_show);
+//			OLED_Refresh_Gram();
+//		}
+//		moveGyroPID(58, 1);
+//		htim1.Instance->CCR4 = LEFT;
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 1000);
+//		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2000);
+//		continueMoving = 0;
+//
+//		while (Distance > 14) {
+//			if (totalAngle >= 25) {
+//				continueMoving = 1;
+//				break;
+//			}
+//			sprintf(offset_show, "angle %5d\0", (int) (totalAngle));
+//			OLED_ShowString(10, 20, offset_show);
+//			OLED_Refresh_Gram();
+//		}
+//		if (continueMoving) {
+//			moveUltraExtreme();
+//		}
+//	}
+//
+//		// THIS PORTION IS FOR COMPLETING THE TURN NO MATTER THE ULTRASENSOR DISTANCE
+//// 		while (moving)
+//// 		{
+//// 			if ((int)totalAngle >= 25)
+//// 			{
+//// 				continueMoving = 1;
+//// 				break;
+//// 			}
+////			 sprintf(offset_show, "angle %5d\0", (int)(totalAngle));
+////			 OLED_ShowString(10,20, offset_show);
+////			 OLED_Refresh_Gram();
+//// 		 }
+//// 		if(continueMoving)
+//// 		{
+////// 			moving = 0;
+////// 			sendToRPI("there");
+//// 			moveUltraExtreme();
+//// 	 		continueMoving = 0;
+//// 		}
+//	}
+//
+//	// straighten STM back to be perpendicular to 2nd obstacle
+//	if (continueMoving) {
+//		if (actualAngle > 0) {
+//			while (actualAngle > 0) {
+//				moving = 1;
+//				htim1.Instance->CCR4 = RIGHT;
+//				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 1000);
+//				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 400);
+//				delay(1);
+//			}
+//		} else if (actualAngle < 0) {
+//			while (actualAngle < 0) {
+//				moving = 1;
+//				htim1.Instance->CCR4 = LEFT;
+//				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 400);
+//				__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 1000);
+//				delay(1);
+//			}
+//		}
+//	}
+//
+//	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+//	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+//	htim1.Instance->CCR4 = STRAIGHT;
+//	HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
+//	HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
 }
 
 void task2A2(uint32_t data) {
@@ -1430,8 +1449,8 @@ void moveUltra() {
 	int servo;
 
 	//pwm values
-	uint16_t pwmValA = 3000;
-	uint16_t pwmValC = 3000;
+	uint16_t pwmValA = 5000;
+	uint16_t pwmValC = 5000;
 
 	// OLED variables for testing PID
 	uint8_t messageA[20];
@@ -1443,6 +1462,19 @@ void moveUltra() {
 
 	/*Infinite loop*/
 	for (;;) {
+
+#define pwmValAadjust 300;
+#define pwmValBadjust 1500;
+#define turboBoost 750;
+				pwmValA = PIDController_Update(&pidLeft,
+						totalDistance_right,
+						totalDistance_left, pwmValA) - pwmValAadjust + turboBoost
+				;
+
+				pwmValC = PIDController_Update(&pidRight, totalDistance_left,
+						totalDistance_right, pwmValC)
+						+ pwmValBadjust + turboBoost
+				;
 
 		__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, pwmValA);
 		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3,pwmValC);
@@ -1494,23 +1526,27 @@ void moveUltra() {
 //
 //			 pwmValC = PIDController_Update(&pidRight, totalDistance_left, totalDistance_right*STRAIGHTRATIOF, pwmValC);
 
+
+
+
+
 			//if robot doesnt go straight, using gyro to adjust, straight = 145
 			if (actualAngle < 0.00) //veering right
 					{
 
-				htim1.Instance->CCR4 = 138; //left abit
-				osDelay(10);
+				htim1.Instance->CCR4 = 135; //left abit
+				osDelay(30);
 			}
 			if (actualAngle > 0.00) //veering left
 					{
 
-				htim1.Instance->CCR4 = 152; //right a bit
-				osDelay(10);
+				htim1.Instance->CCR4 = 157; //right a bit
+				osDelay(30);
 			}
 			if (actualAngle == 0.00) {
 //				 servo = STRAIGHT;
 				htim1.Instance->CCR4 = STRAIGHT; //Straight
-				osDelay(10);
+				osDelay(30);
 			}
 
 			prevTime = currTime;
@@ -1518,7 +1554,9 @@ void moveUltra() {
 			rightTick_prev = rightTick;
 
 			//taking in decimal place
-			if (Distance < 15) // prev was 10
+			if (Distance < 13) // prev was 10
+				// 15 == 55cm
+				// 10 == 40cm
 					{
 				break;
 			}
@@ -1529,8 +1567,12 @@ void moveUltra() {
 	}
 
 //	moving = 0;
-	move(1, 0);
+//	move(1, 0);
 //	offsetAngle = targetAngle - actualAngle;
+
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 0);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 0);
+
 	HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
@@ -1663,9 +1705,9 @@ void moveUltraEnd() {
 					* wheel_circumference;
 			totalDistance_right += distRight;
 
-//			 pwmValA = PIDController_Update(&pidLeft, totalDistance_right*STRAIGHTRATIOF, totalDistance_left, pwmValA);
-//
-//			 pwmValC = PIDController_Update(&pidRight, totalDistance_left, totalDistance_right*STRAIGHTRATIOF, pwmValC);
+			 pwmValA = PIDController_Update(&pidLeft, totalDistance_right*STRAIGHTRATIOF, totalDistance_left, pwmValA);
+
+			 pwmValC = PIDController_Update(&pidRight, totalDistance_left, totalDistance_right*STRAIGHTRATIOF, pwmValC);
 
 			//if robot doesnt go straight, using gyro to adjust, straight = 145
 			if (actualAngle < 0.00) //veering right
@@ -1691,7 +1733,7 @@ void moveUltraEnd() {
 			rightTick_prev = rightTick;
 
 			//taking in decimal place
-			if (Distance < 8) {
+			if (Distance < 13) {
 				break;
 			}
 			sprintf(messageA, "angle %5d\0", (int) (actualAngle));
@@ -3372,13 +3414,14 @@ void turn(uint8_t direction, uint8_t forward) {
 void testUltrasonic(){
 //	OLED_Clear();
 	HCSR04_Read();
+	uint8_t distance_string[20];
 //	hundreds_digit = (Distance/100) + 48;   // 100th pos
 //	tens_digit = ((Distance/10)%10) +48;  // 10th pos
 //	ones_digit = (Distance%10)+48;  // 1st pos
 //	Distance = hundreds_digit * 100 + tens_digit * 10 + ones_digit;
-	sprintf(Distance, (int) (Distance));
+	sprintf(distance_string, "distance: %d\0" ,(int) (Distance));
 
-		  OLED_ShowString(10, 20, Distance);
+		  OLED_ShowString(10, 20, distance_string);
 		  OLED_Refresh_Gram();
 		  osDelay(100);
 //		  Distance = 0;
@@ -3652,6 +3695,19 @@ void StartDefaultTask(void *argument) {
 //	bLeft90();
 //	osDelay(2000);
 
+		// Hard Code II
+//		HCSR04_Read();
+//			uint8_t distance_string[20];
+//		//	hundreds_digit = (Distance/100) + 48;   // 100th pos
+//		//	tens_digit = ((Distance/10)%10) +48;  // 10th pos
+//		//	ones_digit = (Distance%10)+48;  // 1st pos
+//		//	Distance = hundreds_digit * 100 + tens_digit * 10 + ones_digit;
+//			sprintf(distance_string, "%d\0" ,(int) (Distance));
+//
+//				  OLED_ShowString(10, 20, distance_string);
+//				  OLED_Refresh_Gram();
+//				  osDelay(100);
+
 		// assume
 		// 1: forward
 		// 2: left
@@ -3760,8 +3816,8 @@ void StartDefaultTask(void *argument) {
 				task2A2L(data);
 				sendToRPI("RPI:d");
 				break;
-			case 'm':
-				testUltrasonic();
+			case 'm': // tester
+				moveUltra();
 				sendToRPI("RPI:d");
 				break;
 			default:
