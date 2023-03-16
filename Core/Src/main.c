@@ -1410,7 +1410,7 @@ void secObstL() {
 	osDelay(400);
 	right90();
 	osDelay(400);
-	moveGyroPIDFast(distanceTraveled + 20, 1);
+	moveGyroPIDFast(distanceTraveled + 10, 1);
 	osDelay(400);
 	right90();
 	osDelay(400);
@@ -1436,7 +1436,7 @@ void secObstR() {
 	osDelay(400);
 	left90();
 	osDelay(400);
-	moveGyroPIDFast(distanceTraveled + 20, 1);
+	moveGyroPIDFast(distanceTraveled + 10, 1);
 	osDelay(400);
 	left90();
 	osDelay(400);
@@ -1511,8 +1511,8 @@ void moveUltra() {
 	int servo;
 
 	//pwm values
-	uint16_t pwmValA = 3750;
-	uint16_t pwmValC = 3750;
+	uint16_t pwmValA = 2400;
+	uint16_t pwmValC = 2400;
 
 	// OLED variables for testing PID
 	uint8_t messageA[20];
@@ -1628,14 +1628,11 @@ void moveUltra() {
 			rightTick_prev = rightTick;
 
 			//taking in decimal place
-			if (Distance < 13.5) // prev was 10
-					{
-				while (Distance > 8.75) {
-
-					__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 1600);
-					__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3,1600);
-				}
-				break;
+			if (Distance < 13.5) {
+				pwmValA = 1600;
+				pwmValC = 1600;
+				if (Distance < 8.75)
+					break;
 			}
 		}
 	}
@@ -1643,7 +1640,7 @@ void moveUltra() {
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, 0);
 	distanceTraveled = distanceTraveled
-			+ ((totalDistance_left + totalDistance_right) / 2) + 10 + 50; // travelled + err + not counting
+			+ ((totalDistance_left + totalDistance_right) / 2) + 10 + 30; // travelled + err + not counting
 //	offsetAngle = targetAngle - actualAngle;
 	htim1.Instance->CCR4 = STRAIGHT; //centre
 	HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
@@ -1657,10 +1654,6 @@ void moveUltra() {
 }
 
 void parkingMoveUltra() {
-
-#define PID_LIM_MIN  1800 //
-#define PID_LIM_MAX  2200 //
-
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
@@ -1805,13 +1798,13 @@ void parkingMoveUltra() {
 //					totalDistance_right * STRAIGHTRATIOF, pwmValC);
 
 			//if robot doesnt go straight, using gyro to adjust, straight = 145
-			if (actualAngle < -0.50) //veering right
+			if (actualAngle < -0.333) //veering right
 					{
 
 				htim1.Instance->CCR4 = 138; //left abit
 //				osDelay(10);
 			}
-			if (actualAngle > 0.00) //veering left
+			if (actualAngle > 0.333) //veering left
 					{
 
 				htim1.Instance->CCR4 = 155; //right a bit
@@ -1830,12 +1823,10 @@ void parkingMoveUltra() {
 			//taking in decimal place
 			if (Distance < 4) // prev was 10
 					{
-				while (Distance > 2) {
-
-					__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 750);
-					__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3,750);
-				}
-				break;
+				pwmValA = 750;
+				pwmValC = 750;
+				if (Distance < 2)
+					break;
 			}
 		}
 	}
@@ -3853,11 +3844,11 @@ void left90() {
 	HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
 	moving = 1;
 	htim1.Instance->CCR4 = 103;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 450);
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2700);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 700);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2500);
 	while (moving) {
 
-		if (totalAngle >= 85.333) {
+		if (totalAngle >= 85) {
 			break;
 		}
 	}
@@ -3959,8 +3950,8 @@ void goRoundObsticleL() {
 
 	// left
 	htim1.Instance->CCR4 = 120;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 700);
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3000);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 800);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2500);
 	while (moving) {
 
 		if (totalAngle >= 45) {
@@ -3977,8 +3968,8 @@ void goRoundObsticleL() {
 	totalAngle = 0;
 	moving = 1;
 	htim1.Instance->CCR4 = 205;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3000);
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 800);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2500);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 780);
 	while (moving) {
 
 		if (totalAngle < -97) {
@@ -3994,11 +3985,11 @@ void goRoundObsticleL() {
 	totalAngle = 0;
 	moving = 1;
 	htim1.Instance->CCR4 = 104;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 700);
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3000);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 800);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2500);
 	while (moving) {
 
-		if (totalAngle >= 44) {
+		if (totalAngle >= 46) {
 			break;
 		}
 	}
@@ -4097,12 +4088,12 @@ void goRoundObsticleR() {
 
 	//right
 	totalAngle = 0;
-	htim1.Instance->CCR4 = 180;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3000);
+	htim1.Instance->CCR4 = 190;
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2500);
 	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 800);
 	while (moving) {
 
-		if (totalAngle <= -45) {
+		if (totalAngle <= -50) {
 			break;
 		}
 	}
@@ -4114,12 +4105,12 @@ void goRoundObsticleR() {
 	// left180
 	totalAngle = 0;
 	moving = 1;
-	htim1.Instance->CCR4 = 103;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 700);
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 3000);
+	htim1.Instance->CCR4 = 100;
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 800);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 2500);
 	while (moving) {
 
-		if (totalAngle >= 92) {
+		if (totalAngle >= 98) {
 			break;
 		}
 	}
@@ -4132,11 +4123,11 @@ void goRoundObsticleR() {
 	totalAngle = 0;
 	moving = 1;
 	htim1.Instance->CCR4 = 220;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 3000);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2500);
 	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 800);
 	while (moving) {
 
-		if (totalAngle <= -41) {
+		if (totalAngle <= -44) {
 			break;
 		}
 	}
@@ -4195,11 +4186,11 @@ void right90() {
 	HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
 	moving = 1;
 	htim1.Instance->CCR4 = 250;
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2700);
-	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 700);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1, 2400);
+	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 600);
 	while (moving) {
 
-		if (totalAngle < -85.333) {
+		if (totalAngle < -86) {
 			break;
 		}
 		sprintf(messageA, "Rangle %5d\0", (int) (totalAngle));
@@ -4802,8 +4793,11 @@ void StartDefaultTask(void *argument) {
 				osDelay(300);
 				if (Distance < 8)
 					tooClose();
-				else
-					moveUltra();
+				else if (Distance < 8 || Distance > 100) {
+					moveGyroPID(1, 0);
+					tooClose();
+				}
+				moveUltra();
 
 				sendToRPI("RPI:d");
 				break;
@@ -4814,8 +4808,11 @@ void StartDefaultTask(void *argument) {
 				osDelay(1000);
 				if (Distance < 8)
 					tooClose();
-				else
-					moveUltra();
+				else if (Distance < 8 || Distance > 100) {
+					moveGyroPID(1, 0);
+					tooClose();
+				}
+				moveUltra();
 				sendToRPI("RPI:d");
 				break;
 			case 'u':
