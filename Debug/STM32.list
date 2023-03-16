@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_macro  00004adb  00000000  00000000  000559f8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0001e19a  00000000  00000000  0005a4d3  2**0
+ 18 .debug_line   0001e199  00000000  00000000  0005a4d3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000db518  00000000  00000000  0007866d  2**0
+ 19 .debug_str    000db518  00000000  00000000  0007866c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000050  00000000  00000000  00153b85  2**0
+ 20 .comment      00000050  00000000  00000000  00153b84  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  000084f4  00000000  00000000  00153bd8  2**2
+ 21 .debug_frame  000084f4  00000000  00000000  00153bd4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -4659,10 +4659,10 @@ void moveUltra() {
 				pwmValC = 1600;
  8002704:	f44f 63c8 	mov.w	r3, #1600	; 0x640
  8002708:	f8a7 3098 	strh.w	r3, [r7, #152]	; 0x98
-				if (Distance < 8.75)
+				if (Distance < 9.5)
  800270c:	4b27      	ldr	r3, [pc, #156]	; (80027ac <moveUltra+0x424>)
  800270e:	edd3 7a00 	vldr	s15, [r3]
- 8002712:	ed9f 7a27 	vldr	s14, [pc, #156]	; 80027b0 <moveUltra+0x428>
+ 8002712:	eeb2 7a03 	vmov.f32	s14, #35	; 0x41180000  9.5
  8002716:	eef4 7ac7 	vcmpe.f32	s15, s14
  800271a:	eef1 fa10 	vmrs	APSR_nzcv, fpscr
  800271e:	d400      	bmi.n	8002722 <moveUltra+0x39a>
@@ -4675,12 +4675,12 @@ void moveUltra() {
 	}
 
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 0);
- 8002724:	4b23      	ldr	r3, [pc, #140]	; (80027b4 <moveUltra+0x42c>)
+ 8002724:	4b22      	ldr	r3, [pc, #136]	; (80027b0 <moveUltra+0x428>)
  8002726:	681b      	ldr	r3, [r3, #0]
  8002728:	2200      	movs	r2, #0
  800272a:	635a      	str	r2, [r3, #52]	; 0x34
 	__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_3, 0);
- 800272c:	4b21      	ldr	r3, [pc, #132]	; (80027b4 <moveUltra+0x42c>)
+ 800272c:	4b20      	ldr	r3, [pc, #128]	; (80027b0 <moveUltra+0x428>)
  800272e:	681b      	ldr	r3, [r3, #0]
  8002730:	2200      	movs	r2, #0
  8002732:	63da      	str	r2, [r3, #60]	; 0x3c
@@ -4691,7 +4691,7 @@ void moveUltra() {
  800273c:	ee77 7a27 	vadd.f32	s15, s14, s15
  8002740:	eef0 6a00 	vmov.f32	s13, #0	; 0x40000000  2.0
  8002744:	ee87 7aa6 	vdiv.f32	s14, s15, s13
- 8002748:	4b1b      	ldr	r3, [pc, #108]	; (80027b8 <moveUltra+0x430>)
+ 8002748:	4b1a      	ldr	r3, [pc, #104]	; (80027b4 <moveUltra+0x42c>)
  800274a:	edd3 7a00 	vldr	s15, [r3]
  800274e:	ee77 7a27 	vadd.f32	s15, s14, s15
  8002752:	eeb2 7a04 	vmov.f32	s14, #36	; 0x41200000  10.0
@@ -4699,7 +4699,7 @@ void moveUltra() {
  800275a:	eeb3 7a0e 	vmov.f32	s14, #62	; 0x41f00000  30.0
  800275e:	ee77 7a87 	vadd.f32	s15, s15, s14
 	distanceTraveled = distanceTraveled
- 8002762:	4b15      	ldr	r3, [pc, #84]	; (80027b8 <moveUltra+0x430>)
+ 8002762:	4b14      	ldr	r3, [pc, #80]	; (80027b4 <moveUltra+0x42c>)
  8002764:	edc3 7a00 	vstr	s15, [r3]
 //	offsetAngle = targetAngle - actualAngle;
 	htim1.Instance->CCR4 = STRAIGHT; //centre
@@ -4710,22 +4710,22 @@ void moveUltra() {
 	HAL_GPIO_WritePin(GPIOA, AIN1_Pin, GPIO_PIN_SET);
  8002770:	2201      	movs	r2, #1
  8002772:	2108      	movs	r1, #8
- 8002774:	4811      	ldr	r0, [pc, #68]	; (80027bc <moveUltra+0x434>)
+ 8002774:	4810      	ldr	r0, [pc, #64]	; (80027b8 <moveUltra+0x430>)
  8002776:	f005 f83d 	bl	80077f4 <HAL_GPIO_WritePin>
 	HAL_GPIO_WritePin(GPIOA, AIN2_Pin, GPIO_PIN_RESET);
  800277a:	2200      	movs	r2, #0
  800277c:	2104      	movs	r1, #4
- 800277e:	480f      	ldr	r0, [pc, #60]	; (80027bc <moveUltra+0x434>)
+ 800277e:	480e      	ldr	r0, [pc, #56]	; (80027b8 <moveUltra+0x430>)
  8002780:	f005 f838 	bl	80077f4 <HAL_GPIO_WritePin>
 	HAL_GPIO_WritePin(GPIOE, CIN1_Pin, GPIO_PIN_SET);
  8002784:	2201      	movs	r2, #1
  8002786:	f44f 5180 	mov.w	r1, #4096	; 0x1000
- 800278a:	480d      	ldr	r0, [pc, #52]	; (80027c0 <moveUltra+0x438>)
+ 800278a:	480c      	ldr	r0, [pc, #48]	; (80027bc <moveUltra+0x434>)
  800278c:	f005 f832 	bl	80077f4 <HAL_GPIO_WritePin>
 	HAL_GPIO_WritePin(GPIOC, CIN2_Pin, GPIO_PIN_RESET);
  8002790:	2200      	movs	r2, #0
  8002792:	2120      	movs	r1, #32
- 8002794:	480b      	ldr	r0, [pc, #44]	; (80027c4 <moveUltra+0x43c>)
+ 8002794:	480a      	ldr	r0, [pc, #40]	; (80027c0 <moveUltra+0x438>)
  8002796:	f005 f82d 	bl	80077f4 <HAL_GPIO_WritePin>
 
 	osDelay(10);
@@ -4740,12 +4740,12 @@ void moveUltra() {
  80027a6:	bd80      	pop	{r7, pc}
  80027a8:	20000258 	.word	0x20000258
  80027ac:	20000448 	.word	0x20000448
- 80027b0:	410c0000 	.word	0x410c0000
- 80027b4:	20000378 	.word	0x20000378
- 80027b8:	20000434 	.word	0x20000434
- 80027bc:	40020000 	.word	0x40020000
- 80027c0:	40021000 	.word	0x40021000
- 80027c4:	40020800 	.word	0x40020800
+ 80027b0:	20000378 	.word	0x20000378
+ 80027b4:	20000434 	.word	0x20000434
+ 80027b8:	40020000 	.word	0x40020000
+ 80027bc:	40021000 	.word	0x40021000
+ 80027c0:	40020800 	.word	0x40020800
+ 80027c4:	00000000 	.word	0x00000000
 
 080027c8 <parkingMoveUltra>:
 

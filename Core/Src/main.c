@@ -1631,7 +1631,7 @@ void moveUltra() {
 			if (Distance < 13.5) {
 				pwmValA = 1600;
 				pwmValC = 1600;
-				if (Distance < 8.75)
+				if (Distance < 9.5)
 					break;
 			}
 		}
