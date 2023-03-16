@@ -1881,9 +1881,9 @@ void parkingMoveUltra() {
 			rightTick_prev = rightTick;
 
 			//taking in decimal place
-			if (Distance < 4) // prev was 10
+			if (Distance < 8) // prev was 10
 					{
-				while (Distance > 2) {
+				while (Distance > 4) {
 
 					__HAL_TIM_SetCompare(&htim8, TIM_CHANNEL_1, 750);
 					__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3,750);
