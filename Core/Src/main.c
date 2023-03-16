@@ -1821,11 +1821,11 @@ void parkingMoveUltra() {
 			rightTick_prev = rightTick;
 
 			//taking in decimal place
-			if (Distance < 4) // prev was 10
+			if (Distance < 8) // prev was 10
 					{
 				pwmValA = 750;
 				pwmValC = 750;
-				if (Distance < 2)
+				if (Distance < 4)
 					break;
 			}
 		}
@@ -4818,8 +4818,8 @@ void StartDefaultTask(void *argument) {
 			case 'u':
 				moveUltra();
 				sendToRPI("RPI:d");
-				osDelay(50);
-				sendToRPI("RPI:s"); // command for rpi to take photo
+//				osDelay(50);
+//				sendToRPI("RPI:s"); // command for rpi to take photo
 //			osDelay(1000);
 				break;
 			case 't': // second
