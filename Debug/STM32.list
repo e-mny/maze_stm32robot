@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_macro  00004ae9  00000000  00000000  000559f8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   0001e19b  00000000  00000000  0005a4e1  2**0
+ 18 .debug_line   0001e19d  00000000  00000000  0005a4e1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000db518  00000000  00000000  0007867c  2**0
+ 19 .debug_str    000db518  00000000  00000000  0007867e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000050  00000000  00000000  00153b94  2**0
+ 20 .comment      00000050  00000000  00000000  00153b96  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  000084f4  00000000  00000000  00153be4  2**2
+ 21 .debug_frame  000084f4  00000000  00000000  00153be8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -4135,6 +4135,8 @@ void secObstL() {
 void secObstR() {
  80022b0:	b580      	push	{r7, lr}
  80022b2:	af00      	add	r7, sp, #0
+
+	// indoor
 	right90();
  80022b4:	f003 fb90 	bl	80059d8 <right90>
 	osDelay(400);
@@ -4201,6 +4203,11 @@ void secObstR() {
  800234e:	f00b f8c2 	bl	800d4d6 <osDelay>
 	parkingMoveUltra();
  8002352:	f000 fa2f 	bl	80027b4 <parkingMoveUltra>
+//	//	moveGyroPID(8, 1);
+//	//	osDelay(400);
+//		right90();
+//		osDelay(400);
+//		parkingMoveUltra();
 }
  8002356:	bf00      	nop
  8002358:	bd80      	pop	{r7, pc}
@@ -11023,7 +11030,7 @@ void goRoundObsticleR() {
 	while (moving) {
  800594e:	e00a      	b.n	8005966 <goRoundObsticleR+0x186>
 
-		if (totalAngle <= -42) {
+		if (totalAngle <= -41) {
  8005950:	4b17      	ldr	r3, [pc, #92]	; (80059b0 <goRoundObsticleR+0x1d0>)
  8005952:	e9d3 0100 	ldrd	r0, r1, [r3]
  8005956:	f04f 0200 	mov.w	r2, #0
@@ -11086,7 +11093,7 @@ void goRoundObsticleR() {
  80059c4:	40020800 	.word	0x40020800
  80059c8:	20000414 	.word	0x20000414
  80059cc:	c0480000 	.word	0xc0480000
- 80059d0:	c0450000 	.word	0xc0450000
+ 80059d0:	c0448000 	.word	0xc0448000
  80059d4:	00000000 	.word	0x00000000
 
 080059d8 <right90>:

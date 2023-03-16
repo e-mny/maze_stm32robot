@@ -4121,7 +4121,7 @@ void goRoundObsticleR() {
 	__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3, 600);
 	while (moving) {
 
-		if (totalAngle <= -42) {
+		if (totalAngle <= -43) {
 			break;
 		}
 	}
