@@ -59,6 +59,5 @@ The robot is designed to navigate and detect the printed number on a particular 
 
 ## Acknowledgments 🫡
 
-- Special thanks to all team members who contributed to this project.
-- Inspired by various open-source maze-solving robots and algorithms.
+- Special thanks to all team members who contributed to this project! Many sleepless nights were scarificed...
 
