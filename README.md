@@ -6,7 +6,7 @@ This project involves the development of a robot using C programming and the STM
 
 The robot is designed to navigate and detect the printed number on a particular side of each block.
 
- <! -- Insert MDP Video / GIF here -->
+ ![Robot Moving Gif](mdp-gif.gif)
 
 ## Features 💯
 
