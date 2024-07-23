@@ -1,6 +1,6 @@
 # Image Capturing Robot
 
-## Overview 📙
+## 📙 Overview 
 
 This project involves the development of a robot using C programming and the STM32F407VETX microcontroller board. 
 
@@ -8,34 +8,34 @@ The robot is designed to navigate and detect the printed number on a particular 
 
  ![Robot Moving Gif](mdp-gif.gif)
 
-## Features 💯
+## 💯 Features 
 
 - Trained on YOLOV7 Object Detection model
 - Obstacle detection and avoidance
 - Efficient pathfinding algorithm
 
-## Hardware Components 🤖
+## 🤖 Hardware Components 
 
 - **STM32F407VETX Board**: The microcontroller board used for processing and control.
 - **Ultrasonic Sensors**: Used for obstacle detection.
 - **Motors and Motor Drivers**: For robot movement.
 - **Raspberry Pi**: Middleware to communicate to all peripherals.
 
-## Software Components 💻
+## 💻 Software Components 
 
 - **Programming Language**: C
 - **Development Environment**: STM32CubeIDE or any compatible IDE
 - **Libraries**: HAL (Hardware Abstraction Layer) libraries for STM32
 
-## Installation and Setup 🛠️
+## 🛠️ Installation and Setup 
 
-### Prerequisites 
+### 💻 Prerequisites 
 
 - STM32CubeIDE or a compatible IDE installed on your computer.
 - STM32CubeMX for initializing the STM32F407VETX board.
 - Basic knowledge of C programming and embedded systems.
 
-### Steps 📝
+### 📝 Steps 
 
 1. **Clone the Repository**:
     ```sh
@@ -57,7 +57,7 @@ The robot is designed to navigate and detect the printed number on a particular 
     - Upload the firmware to the board.
 
 
-## Acknowledgments 🫡
+## 🫡 Acknowledgments
 
 - Special thanks to all team members who contributed to this project! Many sleepless nights were sacrificed...
 
